@@ -1,13 +1,16 @@
-compile = "make -s"
-run = "./main"
-entrypoint = "main.cpp"
-hidden = ["main", "**/*.o", "**/*.d", ".ccls-cache", "Makefile"]
+language = "bash"
+run = "chmod +x run.sh;./run.sh"
+entrypoint = "main.c"
+hidden = ["main", "main-debug", "**/*.o", "**/*.d", ".ccls-cache", "Makefile"]
+compile = ["make", "-s"]
 
-[nix]
-channel = "stable-22_11"
+[languages]
 
-[gitHubImport]
-requiredFiles = [".replit", "replit.nix", ".ccls-cache"]
+[languages.c]
+pattern = "**/*.{c,h}"
+
+[languages.c.languageServer]
+start = "ccls"
 
 [debugger]
 support = true
@@ -44,25 +47,24 @@ type = "request"
 
 [debugger.interactive.launchMessage.arguments]
 MIMode = "gdb"
-arg = []
 cwd = "."
-environment = []
 externalConsole = false
-logging = {}
 miDebuggerPath = "gdb"
 name = "g++ - Build and debug active file"
 program = "./main-debug"
 request = "launch"
-setupCommands = [
-	{ description = "Enable pretty-printing for gdb", ignoreFailures = true, text = "-enable-pretty-printing" }
-]
 stopAtEntry = false
 type = "cppdbg"
 
-[languages]
+[debugger.interactive.launchMessage.arguments.logging]
 
-[languages.cpp]
-pattern = "**/*.{cpp,h}"
+[[debugger.interactive.launchMessage.arguments.setupCommands]]
+description = "Enable pretty-printing for gdb"
+ignoreFailures = true
+text = "-enable-pretty-printing"
 
-[languages.cpp.languageServer]
-start = "ccls"
+[nix]
+channel = "stable-22_11"
+
+[gitHubImport]
+requiredFiles = [".replit", "replit.nix", ".ccls-cache"]
